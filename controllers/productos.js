@@ -54,24 +54,34 @@ productoRouter.get('/lista-producto', async (req, res) => {
     }
 })
 
-//editar usuario 
-productoRouter.post('/edit-producto',async(req,res)=>{
-    try{
-        const {nombre,precio,categoria,id} = req.body
-        if(!nombre && !precio && !categoria){
-            return res.status(400).json({error:'todos los campos son obligatorios'})
-        }else{
-            const updateProducto = await Producto.findOneAndUpdate({_id:id},{nombre:nombre, precio:precio, categoria:categoria})
-
-            await updateProducto.save()
-
-            return res.status(200),json({msg:'se ha actualizado los datos correctamente'})
-        }
-
-    }catch(error){
-        return res.status(400).json({error:'error'})
+// Editar producto
+productoRouter.get('/edit-producto/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const producto = await Producto.findById(id)
+    if (!producto) {
+      return res.status(404).json({ error: 'Producto no encontrado' })
     }
+    res.status(200).json(producto)
+  } catch (error) {
+    console.error(error)
+    res.status(400).json({ error: 'Error al obtener el producto' })
+  }
 })
+
+productoRouter.put('/edit-producto/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const { nombre, precio, categoria } = req.body
+
+    const producto = await Producto.findByIdAndUpdate(id, { nombre, precio, categoria }, { new: true })
+    res.status(200).json({ msg: 'Producto actualizado correctamente' })
+  } catch (error) {
+    res.status(400).json({ error: 'Error al actualizar el producto' })
+  }
+})
+  
+
 
 //eliminar producto
 productoRouter.post('/delete-producto/:id',async(req,res)=>{
@@ -85,7 +95,15 @@ productoRouter.post('/delete-producto/:id',async(req,res)=>{
     }
 })
 
-
+productoRouter.get('/buscar-producto', async (req, res) => {
+    const { nombre } = req.query;
+    try {
+      const productos = await Producto.find({ nombre: { $regex: nombre, $options: 'i' } });
+      res.json({ data: productos });
+    } catch (error) {
+      res.status(400).json({ error: 'Ha ocurrido un error' });
+    }
+  });
 
     
 

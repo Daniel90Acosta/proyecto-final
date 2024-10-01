@@ -1,7 +1,8 @@
 const listado = document.querySelector('#listado-Productos')
+const categoria = document.querySelector('#categorias-productos')
 
 document.addEventListener('DOMContentLoaded', mostrarProductos)
-
+//document.addEventListener('DOMContentLoaded', mostrar)
 
 
 async function mostrarProductos() {
@@ -10,13 +11,22 @@ async function mostrarProductos() {
     const response = await axios.get('/api/productos/lista-producto');
     const p = response.data;
     const productos = p.data
-    //console.log(productos.data);
+    console.log(productos.data);
 
+    const categoriaEspecifica = '4'; // Replace with the desired category
+    const productosFiltrados = productos.filter(i => i.categoria === categoriaEspecifica);
     
 
-    productos.forEach(i => {
-        const { nombre, precio, id } = i
+    productosFiltrados.forEach(i => {
+        const { nombre, precio,id } = i
         const row = document.createElement('div')
+        const columna = document.createElement('div')
+
+        columna.innerHTML +=`
+        <div class="bg-gray-300 ">
+            <p>${nombre}</p>
+        </div>        
+        `
 
         row.innerHTML += `
 
@@ -31,7 +41,7 @@ async function mostrarProductos() {
                 </div> <!--.card-->
         </div>
         `
+        categoria.appendChild(columna)
         listado.appendChild(row)
     });
 }
-

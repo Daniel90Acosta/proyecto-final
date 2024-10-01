@@ -19,10 +19,15 @@ passwordinput.addEventListener('input',e=>{
 
 })
 
-formulario.addEventListener('submit',async e=>{
+formulario.addEventListener('submit', async e => {
     e.preventDefault();
-
+  
     if (datosLogin.email && datosLogin.password) {
-        const response = await axios.get('/api/users',datosLogin)
+      const response = await axios.post('/api/users/login', datosLogin);
+  
+      if (response.status === 200) {
+        window.location.href = '/'; // Redirige a la página principal
+        localStorage.setItem('logueado', 'true');
+      }
     }
-})
+  });

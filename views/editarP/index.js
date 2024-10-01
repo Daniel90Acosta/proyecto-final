@@ -1,59 +1,60 @@
+// Frontend
+document.addEventListener('DOMContentLoaded', function() {
+  const editarBtn = document.querySelector('#editar-btn')
+  const nombreInput = document.querySelector('#nombre')
+  const precioInput = document.querySelector('#precio')
+  const categoriaInput = document.querySelector('#categoria')
+  const idInput = document.querySelector('#id')
+  const formulario = document.querySelector('#formulario')
 
- 
-const nombreInput = document.querySelector('#nombre')
-const precioInput = document.querySelector('#precio')
-const categoriaInput = document.querySelector('#categoria')
-const idInput = document.querySelector('#id')
-const formulario = document.querySelector('#formulario')
+  editarBtn.addEventListener('click', async () => {
+    const parametrosURL = new URLSearchParams(window.location.search)
+    const idProducto = mongoose.Types.ObjectId(parametrosURL.get('id'))
 
-   
+    const producto = await axios.get(`/api/productos/edit-producto/${idProducto}`)
+    console.log(producto)
 
-    document.addEventListener('DOMContentLoaded',async ()=>{
-        const parametrosURL = new URLSearchParams(window.location.search)
-        console.log(parametrosURL);
+    mostrarProducto(producto)
 
-        const idProducto = parseInt(parametrosURL.get('id'))
-        console.log(idProducto);
-        
-        const producto = await axios.get('/api/productos/edit-producto')
-        console.log(producto);
+    formulario.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const productoEditado = {
+        nombre: nombreInput.value,
+        precio: precioInput.value,
+        categoria: categoriaInput.value,
+        id: idInput.value
+      }
 
-        mostrarProducto(producto)
-
-        formulario.addEventListener('submit',validarProducto)
+      if (validar(productoEditado)) {
+        mostrarAlerta('todos los campos son obligatorios')
+        return
+      } else {
+        console.log(productoEditado)
+        await editarProducto(productoEditado)
+        window.location.href = '/admin/'
+      }
     })
+  })
+})
 
-    function mostrarProducto(producto) {
-        const {nombre,precio,categoria,id} = producto
+function mostrarProducto(producto) {
+  const { nombre, precio, categoria, id } = producto
 
-        nombreInput.value = nombre
-        precioInput.value = precio
-        categoriaInput.value = categoria
-        idInput.value = id
-
+  nombreInput.value = nombre
+  precioInput.value = precio
+  categoriaInput.value = categoria
+  idInput.value = id
 }
 
-async function validarProducto(e) {
-        e.preventDefault()
-        const producto = {
-            nombre: nombreInput.value,
-            precio: precioInput.value,
-            categoria: categoriaInput.value,
-            id: parseInt(idInput.value )
-        }
-        
-        if (validar(producto)) {
-            //console.log('todos los campos son obligatorios');
-            mostrarAlerta('todos los campos son obligatorios')
-            return
-        }else{
-            console.log(producto);
-            await editarProducto(producto)
-            window.location.href = '/views/adminP/index.html'
-            
-        }
+async function editarProducto(producto) {
+  try {
+    const response = await axios.put(`/api/productos/edit-producto/${producto.id}`, producto)
+    console.log(response.data)
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 function validar(obj) {
-        return !Object.values(obj).every(i=>i !=='')
+  return !Object.values(obj).every(i => i !== '')
 }

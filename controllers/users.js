@@ -107,6 +107,29 @@ userRouter.get('/validar-confirmacion/:email',async(req,res)=>{
     }
 })
 
+userRouter.post('/login', async (req, res) => {
+    try {
+      console.log('Solicitud de login recibida');
+      const { email, password } = req.body;
+      console.log('Email:', email);
+      console.log('Password:', password);
+  
+      const user = await User.findOne({ email });
+      console.log('Usuario encontrado:', user);
+  
+      if (!user) {
+        console.log('Usuario no encontrado');
+        return res.status(401).json({ error: 'Email o contraseña incorrectos' });
+      }
+  
+      console.log('Login exitoso');
+      return res.status(200).json({ msg: 'Login exitoso' });
+    } catch (error) {
+      console.log('Error en la ruta de login:', error);
+      return res.status(500).json({ error: 'Error al autenticar' });
+    }
+  });
+
 
 module.exports = userRouter;
 

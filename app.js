@@ -36,6 +36,12 @@ app.use('/editar',express.static(path.resolve('views','editarP')))
 app.use('/images',express.static(path.resolve('img')))
 //rutas de apartados frontend
 app.use('/apartado-1',express.static(path.resolve('views','apartado-1')))
+app.use('/apartado-2',express.static(path.resolve('views','apartado-2')))
+app.use('/apartado-3',express.static(path.resolve('views','apartado-3')))
+app.use('/apartado-4',express.static(path.resolve('views','apartado-4')))
+app.use('/apartado-5',express.static(path.resolve('views','apartado-5')))
+app.use('/apartado-6',express.static(path.resolve('views','apartado-6')))
+
 
 //importante
 app.use(express.json())
